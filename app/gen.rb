@@ -24,11 +24,11 @@ end
   private
 
   def call
-    if KnownOptions::ALL.include?(ARGV.first)
+    if KnownOptions::ALL.flatten.include?(ARGV.first)
       send("option_#{option_name}".to_sym)
     else
       puts "unknown option: #{ARGV.first}\n"\
-      'usage: gen.rb [--new] [--give] [--list] [--change]'
+           "usage: #{KnownOptions.options_list}"
     end
   end
 
@@ -54,6 +54,17 @@ end
       puts "#{i + 1}) #{service}"
     end
   end
+
+  def option_help
+    puts "\n"
+    KnownOptions::TEXTS.each do |key, value|
+      options = key.is_a?(String) ? key : key.join(', ')
+
+      puts format('%<key>20s   %<value>-3s', key: options, value: value)
+    end
+    puts "\n"
+  end
+  alias option_h option_help
 
   # Чтение существующих записей в файле
   def exist_services
